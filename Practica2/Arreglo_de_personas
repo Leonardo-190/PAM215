@@ -1,0 +1,15 @@
+const persona = [
+{nombre: "Ana", edad: 22},
+{nombre: "Luis", edad: 35},
+{nombre: "Maria", edad: 28},
+];
+//Aqui empesaremos a buscar a luis de la siguiente forma
+const luis = persona.find(persona => persona.nombre === "Luis");
+console.log(luis);//Aqui esperamos imprimir {nombre: "Luis", edad: 35}
+//Aqui buscamos imprimir el nombre y la edad de las personas
+persona.forEach(persona => {
+    console.log(`Nombre: ${persona.nombre}, Edad: ${persona.edad}`);
+});
+//aqui buscamos sumar todas las edades de las personas
+const totalEdad = persona.reduce((suma, persona) => suma + persona.edad, 0);
+console.log(`La suma de todas las edades es: ${totalEdad}`);
