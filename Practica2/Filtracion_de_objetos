@@ -1,0 +1,12 @@
+const productos = [
+{nombre: "Laptop", precio: 12000},
+{nombre: "Mouse", precio: 250},
+{nombre: "Monitor", precio: 3000},
+{nombre: "Teclado", precio: 750},
+];
+//Aqui empezaremos a filtrar los productos con mayor precio
+const productoscaros = productos.filter(producto => producto.precio > 1000);
+//Aqui solo obtendremos los nombres
+const nombres= productoscaros.map(producto => producto.nombre);
+console.log(nombres);//Aqui esperamos imprimir laptop y monitor
+
