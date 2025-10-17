@@ -1,13 +1,13 @@
-//1.import:zona de importaciones 
-import ContadorScreen from './Screens/ContadorScreen';
-
-//2.Main Zona de componentes
+import MenuScreen from './Screens/MenuScreen';
 
 export default function App() {
-  
+
 
   return (
-<ContadorScreen></ContadorScreen>
+
+    <MenuScreen></MenuScreen>
+
+
+ 
   );
 }
-
