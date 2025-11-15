@@ -1,7 +1,7 @@
 import { Text, StyleSheet, View, Button, ActivityIndicator} from 'react-native'
 import React, {useState} from 'react'
 
-export default function ActivityScreens () {
+export default function ActivityScreen () {
     const [loading, setLoading] = useState(false);
 
     const startLoading = () => {
@@ -10,14 +10,12 @@ export default function ActivityScreens () {
     };
     if(loading){
         return(
-       <View>
-        <View>
-          <ActivityIndicator size="large" color="#f6c71dff" animating={true}hidesWhenStopped={true}
+       <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#f6c71dff" animating={true} hidesWhenStopped={true}
           
           />
-          <Text style={styles.Text}>Cargando...</Text>
+          <Text style={styles.text}>Cargando...</Text>
         </View>
-       </View>
         );
     }
     return (
@@ -38,7 +36,7 @@ container: {
     justifyContent: 'center',
     backgroundColor: '#25a0a0ff',
   },
-  title: {
+  Titulo: {
     fontSize: 30,
     alignItems: 'center',
     justifyContent: 'center',
@@ -53,6 +51,4 @@ container: {
     marginTop: 10,
     fontSize: 20,
   },
-
-
 })

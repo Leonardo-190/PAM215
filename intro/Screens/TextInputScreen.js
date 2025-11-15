@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { View, Text, StyleSheet, TextInput, Alert, Button } from 'react-native';
 
-export default function  TextScreen() {
+export default function TextInputScreen() {
     const [nombre, setNombre] = useState('');
     const [contrasenia, setContra] = useState('');
     const [telefono, setTelefono] = useState('');

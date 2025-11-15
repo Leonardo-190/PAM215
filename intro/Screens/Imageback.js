@@ -3,7 +3,7 @@ import { Text, StyleSheet, View, ImageBackground,
 import React,{useEffect,useState} from 'react';
 
 
-export default function backimagenScreen() {
+export default function Imageback() {
   const[cargando,setcargador]=useState(true);
   const desvanecido = new Animated.Value(1);
 

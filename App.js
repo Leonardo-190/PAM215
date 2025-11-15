@@ -1,8 +1,8 @@
+import 'react-native-gesture-handler';
+import 'react-native-reanimated';
 import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import MenuScreen from './Screens/MenuScreen';
-import 'react-native-reanimated';
-
+import MenuScreen from './intro/Screens/MenuScreen';
 
 export default function App() {
   return (

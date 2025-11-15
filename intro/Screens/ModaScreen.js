@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, Modal, Pressable, TextInput } from 'react-native';
 
-export default function  ModalScreen() {
+export default function ModaScreen() {
 
     const [mostrar, setMostrar] = useState(null);
 

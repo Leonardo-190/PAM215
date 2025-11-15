@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, SectionList, ScrollView } from 'react-native';
 
-export default function FlatListScreen() {
+export default function FlatScreen() {
   const datos = [
     { id: '1', nombre: 'Manzana' },
     { id: '2', nombre: 'Platano' },

@@ -1,7 +1,7 @@
 import { Text, View, ScrollView, StyleSheet, Button } from 'react-native';
 import React, { useState, useRef } from 'react';
 
-export default function ScrollViewScreen() {
+export default function ScrollScreen() {
 const scrollRef = useRef();
 const iralfinal= () => {
   scrollRef.current.scrollToEnd({ animated: true });
@@ -19,9 +19,9 @@ const iralfinal= () => {
       <Text style={Styles.Titulo}>practica: scrollView</Text>
       <Text style={Styles.Titulo2}>scrollView</Text>
       
-      <view>
+      <View>
       <Button color={'#08f814ff'} title="Ir al final" onPress={iralfinal} />
-      </view>
+      </View>
 
       <View style={Styles.elemento}>
         <Text style={Styles.text}>Elemento 1</Text>
