@@ -1,17 +1,13 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Settings({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Pantalla de Configuración</Text>
-
-      <Pressable style={[styles.button, styles.buttonProfile]} onPress={() => navigation.navigate('Profile')}>
-        <Text style={styles.buttonText}>Ir a Perfil</Text>
-      </Pressable>
-
-      <Pressable style={[styles.button, styles.buttonHome]} onPress={() => navigation.navigate('Home')}>
-        <Text style={styles.buttonText}>Volver a Home</Text>
-      </Pressable>
+      <View style={styles.iconRow}>
+        <Ionicons name="settings-outline" size={28} color="blue" />
+        <Text style={styles.title}>Configuraciones de usuario</Text>
+      </View>
     </View>
   );
 }
@@ -24,28 +20,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
+  iconRow: {
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  button: {
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 8,
-    marginBottom: 10,
-    alignItems: 'center',
-  },
-  buttonProfile: {
-    backgroundColor: '#007BFF',
-  },
-  buttonHome: {
-    backgroundColor: '#28A745',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    marginLeft: 10,
+    color: 'blue',
   },
 });

@@ -1,17 +1,25 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Button } from 'react-native'; 
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Profile({ navigation }) {
+  const handleDetailsPress = () => {
+    navigation.navigate('Detail'); 
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Pantalla de Perfil</Text>
+      <View style={styles.iconRow}> 
+        <Ionicons name="person-outline" size={28} color="green" />
+        <Text style={styles.title}>Perfil usuario</Text>
+      </View>
+      <View style={{ marginTop: 20 }}>
+          <Button 
+              title="Detalles de Usuario" 
+              onPress={handleDetailsPress} 
+              color="#007BFF"
+          />
+      </View>
 
-      <Pressable style={[styles.button, styles.buttonSettings]} onPress={() => navigation.navigate('Settings')}>
-        <Text style={styles.buttonText}>Ir a Configuración</Text>
-      </Pressable>
-
-      <Pressable style={[styles.button, styles.buttonHome]} onPress={() => navigation.navigate('Home')}>
-        <Text style={styles.buttonText}>Volver a Home</Text>
-      </Pressable>
     </View>
   );
 }
@@ -21,29 +29,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center',     
     padding: 20,
+  },
+  iconRow: {
+    flexDirection: 'column', 
+    alignItems: 'center',
+    marginBottom: 20, 
   },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 40,
-  },
-  button: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 6,
-    marginBottom: 10,
-  },
-  buttonSettings: {
-    backgroundColor: '#FF8B00', 
-  },
-  buttonHome: {
-    backgroundColor: '#2BA745', 
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    marginTop: 5,
+    color: 'green',
   },
 });
