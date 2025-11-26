@@ -1,4 +1,4 @@
-import Usuario from '../Models/Usuario';
+import { Usuario } from '../models/usuario';
 import DatabaseService from '../database/DatabaseService';
 
 export class UsuarioController {
@@ -6,27 +6,12 @@ export class UsuarioController {
     this.listeners = [];
   }
 
-  addListener(callback) {
-    this.listeners.push(callback);
-  }
-
-  removeListener(callback) {
-    this.listeners = this.listeners.filter(l => l !== callback);
-  }
-
-  notifyListeners() {
-    this.listeners.forEach(callback => callback());
-  }
-
+  // Inicializar el controlador con el Service
   async initialize() {
-    try {
-      await DatabaseService.initialize();
-    } catch (error) {
-      console.error('Error inicializando:', error);
-      throw error;
-    }
+    await DatabaseService.initialize();
   }
 
+  // SELECT
   async obtenerUsuarios() {
     try {
       const data = await DatabaseService.getAll();
@@ -37,11 +22,19 @@ export class UsuarioController {
     }
   }
 
+  // INSERT
   async crearUsuario(nombre) {
     try {
+      // 1. Validar
       Usuario.validar(nombre);
+
+      // 2. Insertar en BD
       const nuevoUsuario = await DatabaseService.add(nombre.trim());
+
+      // 3. Notificar observadores
       this.notifyListeners();
+
+      // 4. Retornar en forma de modelo
       return new Usuario(
         nuevoUsuario.id,
         nuevoUsuario.nombre,
@@ -51,5 +44,16 @@ export class UsuarioController {
       console.error('Error al crear usuario:', error);
       throw error;
     }
+  }
+
+  // Observadores
+  addListener(callback) {
+    this.listeners.push(callback);
+  }
+  removeListener(callback) {
+    this.listeners = this.listeners.filter(l => l !== callback);
+  }
+  notifyListeners() {
+    this.listeners.forEach(callback => callback());
   }
 }
