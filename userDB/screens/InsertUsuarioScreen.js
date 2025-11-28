@@ -1,22 +1,30 @@
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Alert, ActivityIndicator, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  StyleSheet,
+  Alert,
+  ActivityIndicator
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { UsuarioController } from '../controllers/UsuarioController';
 
 const controller = new UsuarioController();
 
-export default function InsertUsuarioScreen() {
+export default function UsuarioView() {
   const [usuarios, setUsuarios] = useState([]);
   const [nombre, setNombre] = useState('');
   const [loading, setLoading] = useState(true);
   const [guardando, setGuardando] = useState(false);
 
-  // SELECT: cargar usuarios
   const cargarUsuarios = useCallback(async () => {
     try {
       setLoading(true);
       const data = await controller.obtenerUsuarios();
       setUsuarios(data);
-      console.log(`${data.length} usuarios cargados`);
     } catch (error) {
       Alert.alert('Error', error.message);
     } finally {
@@ -24,7 +32,6 @@ export default function InsertUsuarioScreen() {
     }
   }, []);
 
-  // Inicializar BD y suscribirse a cambios
   useEffect(() => {
     const init = async () => {
       await controller.initialize();
@@ -38,7 +45,6 @@ export default function InsertUsuarioScreen() {
     };
   }, [cargarUsuarios]);
 
-  // INSERT: agregar usuario
   const handleAgregar = async () => {
     if (guardando) return;
     try {
@@ -53,12 +59,40 @@ export default function InsertUsuarioScreen() {
     }
   };
 
-  // Render de cada usuario
+  const handleActualizar = async (id) => {
+    const nuevoNombre = prompt('Nuevo nombre:');
+    if (!nuevoNombre) return;
+    try {
+      await controller.actualizarUsuario(id, nuevoNombre);
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
+  };
+
+  const handleEliminar = async (id) => {
+    Alert.alert(
+      'Eliminar usuario',
+      '¿Seguro que deseas eliminarlo?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await controller.eliminarUsuario(id);
+            } catch (error) {
+              Alert.alert('Error', error.message);
+            }
+          }
+        }
+      ]
+    );
+  };
+
   const renderUsuario = ({ item, index }) => (
     <View style={styles.userItem}>
-      <View style={styles.userNumber}>
-        <Text style={styles.userNumberText}>{index + 1}</Text>
-      </View>
+      <Text style={styles.userNumberText}>{index + 1}</Text>
       <View style={styles.userInfo}>
         <Text style={styles.userName}>{item.nombre}</Text>
         <Text style={styles.userId}>ID: {item.id}</Text>
@@ -69,99 +103,93 @@ export default function InsertUsuarioScreen() {
             day: 'numeric'
           })}
         </Text>
+        <View style={styles.actionsRow}>
+          <TouchableOpacity onPress={() => handleActualizar(item.id)}>
+            <Text style={styles.editButton}>Editar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleEliminar(item.id)}>
+            <Text style={styles.deleteButton}>Eliminar</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
 
   return (
-    <View style={styles.container}>
-      {/* Encabezado */}
-      <Text style={styles.title}>INSERT & SELECT</Text>
-      <Text style={styles.subtitle}>
-        {Platform.OS === 'web' ? 'WEB (LocalStorage)' : `${Platform.OS.toUpperCase()} (SQLite)`}
-      </Text>
-
-      {/* Insert */}
-      <View style={styles.insertSection}>
-        <Text style={styles.sectionTitle}>Insertar Usuario</Text>
-
-        <TextInput
-          style={styles.input}
-          placeholder="Escribe el nombre del usuario"
-          value={nombre}
-          onChangeText={setNombre}
-          editable={!guardando}
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+      <Text style={styles.title}>Insertar Usuario</Text>
+      <TextInput
+        value={nombre}
+        onChangeText={setNombre}
+        placeholder="Escribe el nombre del usuario"
+        style={styles.input}
+      />
+      <TouchableOpacity onPress={handleAgregar} style={styles.button}>
+        <Text style={styles.buttonText}>Agregar Usuario</Text>
+      </TouchableOpacity>
+      <Text style={styles.subtitle}>Lista de Usuarios</Text>
+      {loading ? (
+        <ActivityIndicator size="large" />
+      ) : (
+        <FlatList
+          data={usuarios}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderUsuario}
         />
-
-        <TouchableOpacity
-          style={[styles.button, guardando && styles.buttonDisabled]}
-          onPress={handleAgregar}
-          disabled={guardando}
-        >
-          <Text style={styles.buttonText}>
-            {guardando ? 'Guardando...' : 'Agregar Usuario'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Lista */}
-      <View style={styles.selectSection}>
-        <View style={styles.selectHeader}>
-          <Text style={styles.sectionTitle}>Lista de Usuarios</Text>
-          <TouchableOpacity style={styles.refreshButton} onPress={cargarUsuarios}>
-            <Text style={styles.refreshText}>Recargar</Text>
-          </TouchableOpacity>
-        </View>
-
-        {loading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#007AFF" />
-            <Text style={styles.loadingText}>Cargando usuarios...</Text>
-          </View>
-        ) : (
-          <FlatList
-            data={usuarios}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderUsuario}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No hay usuarios</Text>
-                <Text style={styles.emptySubtext}>Agrega el primero arriba</Text>
-              </View>
-            }
-            contentContainerStyle={usuarios.length === 0 && styles.emptyList}
-          />
-        )}
-      </View>
-    </View>
+      )}
+      <TouchableOpacity onPress={cargarUsuarios} style={styles.reloadButton}>
+        <Text style={styles.reloadText}>Recargar</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5', paddingTop: 50 },
-  title: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', color: '#333', marginBottom: 5 },
-  subtitle: { fontSize: 14, color: '#666', textAlign: 'center', marginBottom: 20 },
-  insertSection: { backgroundColor: '#fff', padding: 20, marginHorizontal: 15, marginBottom: 15, borderRadius: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 },
-  selectSection: { flex: 1, backgroundColor: '#fff', marginHorizontal: 15, marginBottom: 15, borderRadius: 12, padding: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 15 },
-  input: { borderWidth: 1, borderColor: '#e0e0e0', borderRadius: 8, padding: 15, marginBottom: 12, fontSize: 16, backgroundColor: '#fafafa' },
-  button: { backgroundColor: '#007AFF', padding: 16, borderRadius: 8, alignItems: 'center' },
-  buttonDisabled: { backgroundColor: '#ccc' },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  selectHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  refreshButton: { padding: 8 },
-  refreshText: { color: '#007AFF', fontSize: 14 },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: 40 },
-  loadingText: { marginTop: 10, color: '#666', fontSize: 14 },
-  userItem: { flexDirection: 'row', backgroundColor: '#f9f9f9', padding: 15, borderRadius: 8, marginBottom: 10, borderLeftWidth: 4, borderLeftColor: '#007AFF' },
-  userNumber: { width: 35, height: 35, borderRadius: 17.5, backgroundColor: '#007AFF', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
-  userNumberText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
+  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
+  title: { fontSize: 18, fontWeight: 'bold', marginBottom: 8 },
+  subtitle: { fontSize: 16, fontWeight: '600', marginVertical: 8 },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    borderRadius: 6,
+    marginBottom: 10
+  },
+  button: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 10,
+    borderRadius: 6,
+    alignItems: 'center',
+    marginBottom: 16
+  },
+  buttonText: { color: '#fff', fontWeight: 'bold' },
+  userItem: {
+    flexDirection: 'row',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderColor: '#eee'
+  },
+  userNumberText: {
+    fontWeight: 'bold',
+    marginRight: 10,
+    width: 20,
+    textAlign: 'center'
+  },
   userInfo: { flex: 1 },
-  userName: { fontSize: 16, fontWeight: '600', color: '#333', marginBottom: 4 },
-  userId: { fontSize: 12, color: '#007AFF', marginBottom: 2 },
-  userDate: { fontSize: 12, color: '#666' },
-  emptyContainer: { alignItems: 'center', paddingVertical: 40 },
-  emptyList: { flex: 1, justifyContent: 'center' },
-  emptyText: { fontSize: 18, color: '#999', marginBottom: 8 },
-  emptySubtext: { fontSize: 14, color: '#bbb' },
+  userName: { fontSize: 16, fontWeight: 'bold' },
+  userId: { fontSize: 12, color: '#666' },
+  userDate: { fontSize: 12, color: '#999' },
+  actionsRow: { flexDirection: 'row', marginTop: 4 },
+  editButton: { color: '#007AFF', marginRight: 12 },
+  deleteButton: { color: '#FF3B30' },
+  reloadButton: {
+    marginTop: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    alignSelf: 'flex-start'
+  },
+  reloadText: { color: '#333' }
 });
